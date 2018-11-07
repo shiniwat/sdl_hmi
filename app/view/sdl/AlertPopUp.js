@@ -53,6 +53,7 @@ SDL.AlertPopUp = Em.ContainerView.create(
      *
      * @type {Number}
      */
+    defaultTimeout: 30000,
     alertRequestId: null,
     content1: '',
     content2: '',
@@ -200,7 +201,6 @@ SDL.AlertPopUp = Em.ContainerView.create(
       }
     },
     AlertActive: function(message, alertRequestId) {
-      var self = this;
       this.set('alertRequestId', alertRequestId);
       this.addSoftButtons(message.softButtons, message.appID);
       this.set('progressIndicator', message.progressIndicator);
@@ -227,17 +227,21 @@ SDL.AlertPopUp = Em.ContainerView.create(
         }
       }
       this.set('active', true);
-      this.set('timeout', message.duration ? message.duration : 30000); //default
-                                                                        // timeout
-                                                                        // defined
-                                                                        // for
-                                                                        // Alert
-                                                                        // popUp
-      clearTimeout(this.timer);
-      this.timer = setTimeout(
+      this.setTimer(message.duration ? message.duration : this.defaultTimeout);
+      
+    },
+
+    /*
+     * function setTimer. Sets the active timer of the view
+     */
+    setTimer: function(time){
+      var self = SDL.AlertPopUp;
+      self.set('timeout', time);
+      clearTimeout(self.timer);
+      self.timer = setTimeout(
         function() {
           self.deactivate('timeout');
-        }, this.timeout
+        }, self.timeout
       );
     }
   }
